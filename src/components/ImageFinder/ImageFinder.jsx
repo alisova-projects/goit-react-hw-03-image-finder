@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Searchbar from '../Searchbar';
-import apiService from '../ApiService';
+import apiService from '../../ApiService';
 import ImageGallery from '../ImageGallery';
 import OnLoadMoreBtnClick from '../Button';
 import LoaderSpinner from '../Loader';
@@ -19,19 +19,19 @@ class ImageFinder extends Component {
     gallery: [],
     isModalOpen: false,
     selectedImgURL: '',
+  };
 
-    handleImageClick: e => {
-      if (e.target.nodeName !== 'IMG') {
-        return;
-      }
+  handleImageClick = e => {
+    if (e.target.nodeName !== 'IMG') {
+      return;
+    }
 
-      e.preventDefault();
-      const fullImgLink = e.target.getAttribute('data-large');
-      this.setState({
-        selectedImgURL: fullImgLink,
-        isModalOpen: true,
-      });
-    },
+    e.preventDefault();
+    const fullImgLink = e.target.getAttribute('data-large');
+    this.setState({
+      selectedImgURL: fullImgLink,
+      isModalOpen: true,
+    });
   };
 
   componentDidUpdate(prevProps, prevState) {
