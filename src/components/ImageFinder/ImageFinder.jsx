@@ -81,7 +81,7 @@ class ImageFinder extends Component {
     if (this.state.currentPage > 2) {
       setTimeout(() => {
         window.scrollBy({
-          top: document.documentElement.clientHeight - 200,
+          top: document.documentElement.clientHeight - 130,
           behavior: 'smooth',
         });
       }, 600);
@@ -102,7 +102,6 @@ class ImageFinder extends Component {
     const {
       gallery,
       pictureName,
-      handleImageClick,
       isModalOpen,
       selectedImgURL,
       isLoading,
@@ -113,7 +112,7 @@ class ImageFinder extends Component {
         {gallery.length === 0 && <StartPage />}
         <ToastContainer />
         <div className="Wrapper">{isLoading && <LoaderSpinner />}</div>
-        <authContext.Provider value={handleImageClick}>
+        <authContext.Provider value={this.handleImageClick}>
           {pictureName && <ImageGallery gallery={gallery} />}
         </authContext.Provider>
 
