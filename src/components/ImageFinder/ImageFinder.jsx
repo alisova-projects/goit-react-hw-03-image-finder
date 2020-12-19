@@ -79,15 +79,12 @@ class ImageFinder extends Component {
 
   onLoadMoreBtnClick = () => {
     if (this.state.currentPage > 2) {
-      const options = {
-        top: null,
-        behavior: 'smooth',
-      };
-
-      options.top = window.pageYOffset + document.documentElement.clientHeight;
       setTimeout(() => {
-        window.scrollTo(options);
-      }, 1000);
+        window.scrollBy({
+          top: document.documentElement.clientHeight - 200,
+          behavior: 'smooth',
+        });
+      }, 600);
     }
   };
 
