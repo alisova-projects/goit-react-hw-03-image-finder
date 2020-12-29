@@ -11,7 +11,7 @@ import StartPage from '../StartPage';
 
 class ImageFinder extends Component {
   state = {
-    pictureName: '',
+    query: '',
     picture: null,
     currentPage: 1,
     isLoading: false,
@@ -19,6 +19,7 @@ class ImageFinder extends Component {
     gallery: [],
     isModalOpen: false,
     selectedImgURL: '',
+    scroll: 0,
   };
 
   handleImageClick = e => {
@@ -34,57 +35,50 @@ class ImageFinder extends Component {
     });
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevName = prevState.pictureName;
-    const nextName = this.state.pictureName;
-
-    if (prevName !== nextName) {
+  componentDidUpdate(props, state) {
+    const { query, scroll, currentPage } = this.state;
+    if (state.query !== query) {
       this.fetchPictures();
+    }
+    if (state.scroll !== scroll && currentPage > 2) {
+      window.scrollTo({
+        top: scroll - 200,
+        behavior: 'smooth',
+      });
     }
   }
 
   fetchPictures = () => {
-    const { pictureName, currentPage } = this.state;
-
+    const { query, currentPage } = this.state;
     this.setState({ isLoading: true });
-
-    apiService(pictureName, currentPage)
+    const scrollHeight = document.documentElement.scrollHeight;
+    apiService(query, currentPage)
       .then(images => {
         this.setState(prevState => ({
           gallery: [...prevState.gallery, ...images],
           currentPage: prevState.currentPage + 1,
+          scroll: scrollHeight,
         }));
       })
       .catch(error => this.setState({ error }))
       .finally(() => {
-        this.onLoadMoreBtnClick();
+        // this.onLoadMoreBtnClick();
         this.setState({ isLoading: false });
       });
   };
 
-  handleFormSubmit = pictureName => {
-    this.setState({ pictureName });
+  handleFormSubmit = query => {
+    this.setState({ query });
   };
 
   handleSubmit = query => {
-    if (query !== this.state.pictureName) {
+    if (query !== this.state.query) {
       this.setState({
         gallery: [],
-        pictureName: query,
+        query: query,
         currentPage: 1,
         error: null,
       });
-    }
-  };
-
-  onLoadMoreBtnClick = () => {
-    if (this.state.currentPage > 2) {
-      setTimeout(() => {
-        window.scrollBy({
-          top: document.documentElement.clientHeight - 130,
-          behavior: 'smooth',
-        });
-      }, 600);
     }
   };
 
@@ -101,7 +95,7 @@ class ImageFinder extends Component {
   render() {
     const {
       gallery,
-      pictureName,
+      query,
       isModalOpen,
       selectedImgURL,
       isLoading,
@@ -113,7 +107,7 @@ class ImageFinder extends Component {
         <ToastContainer />
         <div className="Wrapper">{isLoading && <LoaderSpinner />}</div>
         <authContext.Provider value={this.handleImageClick}>
-          {pictureName && <ImageGallery gallery={gallery} />}
+          {query && <ImageGallery gallery={gallery} />}
         </authContext.Provider>
 
         {isModalOpen && (
@@ -122,7 +116,7 @@ class ImageFinder extends Component {
           </Modal>
         )}
         <div className="BtnWrapper">
-          {pictureName && gallery.length > 11 && (
+          {query && gallery.length > 11 && (
             <OnLoadMoreBtnClick onClick={this.fetchPictures} />
           )}
         </div>
